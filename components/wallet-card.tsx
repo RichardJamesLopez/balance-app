@@ -9,6 +9,7 @@ import { useEnsName, useTransactionCount } from 'wagmi'
 import { useTransactions } from "@duneanalytics/hooks"
 import { useState } from "react"
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import { Suspense } from 'react'
 
 interface WalletCardProps {
   address: string
@@ -20,9 +21,11 @@ type Transaction = {
   hash: string;
   type: string;
   block_time: string;
+  chain: string;
 }
 
-type TransactionData = {
+// Update the type definition
+type TransactionResponse = {
   data: {
     transactions: Transaction[];
     next_offset?: boolean;
@@ -31,7 +34,7 @@ type TransactionData = {
   error: Error | null;
 }
 
-export function WalletCard({ address, balance }: WalletCardProps) {
+function WalletCardContent({ address, balance }: WalletCardProps) {
   const { data: ensName } = useEnsName({ address: address as `0x${string}` })
   const { data: txCount } = useTransactionCount({ address: address as `0x${string}` })
   const [pageSize] = useState(10) // Number of transactions per page
@@ -58,15 +61,17 @@ export function WalletCard({ address, balance }: WalletCardProps) {
     }
   }
 
+  // Update the destructuring
   const {
-    data: { transactions },
+    data: transactionData,
     isLoading,
     error
-  } = useTransactions(address, { pageSize }) as TransactionData
+  } = useTransactions(address, { pageSize }) as TransactionResponse
 
   // Function to truncate wallet address for display
-  const truncateAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`
+  const truncateAddress = (address: string): string => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   }
 
   // Function to copy address to clipboard
@@ -87,11 +92,6 @@ export function WalletCard({ address, balance }: WalletCardProps) {
     if (ensName) return ensName.charAt(0).toUpperCase()
     // Use first character after "0x" from the address
     return address.slice(2, 3).toUpperCase()
-  }
-
-  // Update the any type
-  const handleTransactionData = (data: Transaction[]) => {
-    // Handle transaction data
   }
 
   return (
@@ -137,10 +137,10 @@ export function WalletCard({ address, balance }: WalletCardProps) {
             <p className="text-sm text-muted-foreground">Loading transactions...</p>
           ) : error ? (
             <p className="text-sm text-red-500">Error loading transactions</p>
-          ) : transactions?.length ? (
+          ) : transactionData?.transactions?.length ? (
             <div className="space-y-4">
               <ul className="space-y-2">
-                {transactions.map((tx: any) => (
+                {transactionData.transactions.map((tx: Transaction) => (
                   <li key={tx.hash} className="text-sm p-3 rounded-lg border">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">
@@ -221,5 +221,14 @@ export function WalletCard({ address, balance }: WalletCardProps) {
         Made with <span className="text-red-500">❤️</span> by RCL
       </div>
     </div>
+  )
+}
+
+// Wrap the component with Suspense
+export function WalletCard(props: WalletCardProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <WalletCardContent {...props} />
+    </Suspense>
   )
 }
