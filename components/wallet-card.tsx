@@ -1,6 +1,6 @@
 'use client'
 
-import { Copy, ExternalLink } from "lucide-react"
+import { Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -75,6 +75,18 @@ export function WalletCard({ address, balance }: WalletCardProps) {
     if (ensName) return ensName.charAt(0).toUpperCase()
     // Use first character after "0x" from the address
     return address.slice(2, 3).toUpperCase()
+  }
+
+  // Add proper type for transaction data
+  type Transaction = {
+    hash: string;
+    chain: string;
+    block_time: string;
+  }
+
+  // Update the any type
+  const handleTransactionData = (data: Transaction[]) => {
+    // Handle transaction data
   }
 
   return (
