@@ -15,6 +15,22 @@ interface WalletCardProps {
   balance: React.ReactNode
 }
 
+// Define proper types
+type Transaction = {
+  hash: string;
+  type: string;
+  block_time: string;
+}
+
+type TransactionData = {
+  data: {
+    transactions: Transaction[];
+    next_offset?: boolean;
+  };
+  isLoading: boolean;
+  error: Error | null;
+}
+
 export function WalletCard({ address, balance }: WalletCardProps) {
   const { data: ensName } = useEnsName({ address: address as `0x${string}` })
   const { data: txCount } = useTransactionCount({ address: address as `0x${string}` })
@@ -43,14 +59,10 @@ export function WalletCard({ address, balance }: WalletCardProps) {
   }
 
   const {
-    data: transactionData,
+    data: { transactions },
     isLoading,
-    error,
-    nextPage,
-    previousPage,
-    currentPage: useTransactionsCurrentPage,
-    setPage // Add this if available from useTransactions
-  } = useTransactions(address, { pageSize })
+    error
+  } = useTransactions(address, { pageSize }) as TransactionData
 
   // Function to truncate wallet address for display
   const truncateAddress = (address: string) => {
@@ -75,13 +87,6 @@ export function WalletCard({ address, balance }: WalletCardProps) {
     if (ensName) return ensName.charAt(0).toUpperCase()
     // Use first character after "0x" from the address
     return address.slice(2, 3).toUpperCase()
-  }
-
-  // Add proper type for transaction data
-  type Transaction = {
-    hash: string;
-    chain: string;
-    block_time: string;
   }
 
   // Update the any type
@@ -132,10 +137,10 @@ export function WalletCard({ address, balance }: WalletCardProps) {
             <p className="text-sm text-muted-foreground">Loading transactions...</p>
           ) : error ? (
             <p className="text-sm text-red-500">Error loading transactions</p>
-          ) : transactionData?.transactions?.length ? (
+          ) : transactions?.length ? (
             <div className="space-y-4">
               <ul className="space-y-2">
-                {transactionData.transactions.map((tx: any) => (
+                {transactions.map((tx: any) => (
                   <li key={tx.hash} className="text-sm p-3 rounded-lg border">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">
