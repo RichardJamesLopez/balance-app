@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils"
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState("")
   const [displayAddress, setDisplayAddress] = useState("0x71C7656EC7ab88b098defB751B7401B5f6d8976F")
-  const [name, setName] = useState("John Doe")
 
 
   const handleSubmit = (e: React.FormEvent) => {

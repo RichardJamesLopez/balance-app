@@ -4,7 +4,7 @@ import { Copy, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Balance } from "@/components/scaffold-eth"
+//import { Balance } from "@/components/scaffold-eth"
 import { useEnsName, useTransactionCount } from 'wagmi'
 import { useTransactions } from "@duneanalytics/hooks"
 import { useState } from "react"
@@ -123,7 +123,7 @@ export function WalletCard({ address, balance }: WalletCardProps) {
           ) : transactionData?.transactions?.length ? (
             <div className="space-y-4">
               <ul className="space-y-2">
-                {transactionData.transactions.map((tx) => (
+                {transactionData.transactions.map((tx: any) => (
                   <li key={tx.hash} className="text-sm p-3 rounded-lg border">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">

@@ -23,8 +23,7 @@
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.0.0",
-    "wagmi": "^2.0.0",
-    "@duneanalytics/hooks": "^1.1.2"
+    "wagmi": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

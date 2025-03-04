@@ -25,11 +25,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <DuneProvider duneApiKey={process.env.NEXT_PUBLIC_DUNE_API_KEY}>
-          <WagmiProvider config={config}>
-            {children}
-          </WagmiProvider>
-        </DuneProvider>
+        {process.env.NEXT_PUBLIC_DUNE_API_KEY ? (
+          <DuneProvider duneApiKey={process.env.NEXT_PUBLIC_DUNE_API_KEY}>
+            <WagmiProvider config={config}>
+              {children}
+            </WagmiProvider>
+          </DuneProvider>
+        ) : (
+          <div>Missing Dune API Key</div>
+        )}
       </ThemeProvider>
     </QueryClientProvider>
   )
